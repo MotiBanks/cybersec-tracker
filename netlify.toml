@@ -8,7 +8,4 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# Remove the redirect to index.html as it interferes with Next.js routing
