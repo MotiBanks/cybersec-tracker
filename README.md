@@ -19,54 +19,7 @@ A comprehensive application for tracking your cybersecurity learning journey, mo
 - **State Management**: React Context API
 - **Form Handling**: React Hook Form with Zod validation
 
-## Getting Started
 
-### Prerequisites
-
-- Node.js (v18 or higher)
-- npm or pnpm
-- Supabase account
-
-### Setup
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/cybersec-tracker.git
-   cd cybersec-tracker
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   # or
-   pnpm install
-   ```
-
-3. Create a Supabase project:
-   - Sign up at [Supabase](https://supabase.com)
-   - Create a new project
-   - Go to Project Settings > API to get your API keys
-
-4. Create a `.env.local` file in the root directory with the following variables:
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-   ```
-
-5. Set up the database schema:
-   - Go to the SQL Editor in your Supabase dashboard
-   - Copy and paste the contents of `lib/supabase-schema.sql`
-   - Run the SQL script to create all tables and functions
-
-6. Run the development server:
-   ```bash
-   npm run dev
-   # or
-   pnpm dev
-   ```
-
-7. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
 ## Backend Architecture
 
