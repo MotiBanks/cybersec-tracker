@@ -1,0 +1,8 @@
+export const hoverScale = "transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
+export const microMovement = "hover:animate-micro-movement"
+export const glitchEffect = "hover:animate-glitch"
+export const pulseEffect = "animate-pulse"
+export const bounceEffect = "animate-bounce"
+export const fadeIn = "animate-fade-in"
+export const slideIn = "animate-slide-in"
+export const glowEffect = "animate-glow"

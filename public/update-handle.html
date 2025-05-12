@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Your Handle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #000;
+      color: #4ade80;
+      font-family: 'Courier New', monospace;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+  <div class="max-w-md w-full p-6 bg-black/50 border border-green-500/30 rounded-lg shadow-lg backdrop-blur-sm">
+    <h1 class="text-2xl font-bold mb-4 text-green-500">Update Your Handle</h1>
+    <p class="mb-4 text-green-300/80">This tool will update your handle in all necessary places.</p>
+    
+    <div class="mb-4">
+      <label for="handle-input" class="block text-sm font-medium text-green-400 mb-1">Your Handle</label>
+      <input 
+        type="text" 
+        id="handle-input" 
+        class="w-full px-3 py-2 bg-black border border-green-500/30 rounded-md text-green-300 focus:outline-none focus:ring-1 focus:ring-green-500"
+        placeholder="Enter your preferred handle"
+      >
+    </div>
+    
+    <button 
+      onclick="updateHandle()" 
+      class="w-full py-2 px-4 bg-green-600 hover:bg-green-700 text-black font-medium rounded-md transition-colors"
+    >
+      Update Handle
+    </button>
+    
+    <div id="status" class="mt-4 text-center"></div>
+    
+    <p class="mt-6 text-xs text-green-300/60 text-center">
+      After updating your handle, refresh the dashboard to see the changes.
+    </p>
+  </div>
+  
+  <script src="/update-handle.js"></script>
+</body>
+</html>

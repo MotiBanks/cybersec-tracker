@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 0%;
+  --foreground: 142 100% 80%;
+
+  --card: 0 0% 3%;
+  --card-foreground: 142 100% 80%;
+
+  --popover: 0 0% 3%;
+  --popover-foreground: 142 100% 80%;
+
+  --primary: 142 100% 50%;
+  --primary-foreground: 0 0% 0%;
+
+  --secondary: 180 100% 50%;
+  --secondary-foreground: 0 0% 0%;
+
+  --muted: 142 30% 20%;
+  --muted-foreground: 142 50% 70%;
+
+  --accent: 142 30% 20%;
+  --accent-foreground: 142 100% 80%;
+
+  --destructive: 0 100% 50%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 142 30% 30%;
+  --input: 142 30% 30%;
+  --ring: 142 100% 50%;
+
+  --radius: 0.5rem;
+}
+
+body {
+  background-color: black;
+  background-image: radial-gradient(circle at 25% 25%, rgba(0, 255, 100, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(0, 255, 100, 0.05) 0%, transparent 50%);
+  color: rgb(var(--foreground));
+  font-family: monospace;
+}
+
+/* Glitch effect for text */
+.glitch {
+  position: relative;
+  animation: glitch 1s linear infinite;
+}
+
+@keyframes glitch {
+  2%,
+  64% {
+    transform: translate(2px, 0) skew(0deg);
+  }
+  4%,
+  60% {
+    transform: translate(-2px, 0) skew(0deg);
+  }
+  62% {
+    transform: translate(0, 0) skew(5deg);
+  }
+}
+
+.glitch:before,
+.glitch:after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch:before {
+  color: rgba(0, 255, 100, 0.8);
+  animation: glitch-effect 2s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  transform: translate(-2px, -2px);
+}
+
+.glitch:after {
+  color: rgba(0, 255, 255, 0.8);
+  animation: glitch-effect 3s infinite;
+  clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+  transform: translate(2px, 2px);
+}
+
+@keyframes glitch-effect {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-3px, 3px);
+  }
+  40% {
+    transform: translate(-3px, -3px);
+  }
+  60% {
+    transform: translate(3px, 3px);
+  }
+  80% {
+    transform: translate(3px, -3px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+/* Subtle hover animations */
+.hover-scale {
+  transition: transform 0.2s ease;
+}
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+.hover-scale:active {
+  transform: scale(0.98);
+}
+
+/* Micro movement for icons */
+@keyframes micro-movement {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(0.5px, 0.5px);
+  }
+  50% {
+    transform: translate(0, -0.5px);
+  }
+  75% {
+    transform: translate(-0.5px, 0);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+.micro-movement {
+  animation: micro-movement 3s ease-in-out infinite;
+}
+
+/* Task completion animation */
+@keyframes task-complete {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.task-complete {
+  animation: task-complete 0.5s ease-in-out;
+}
+
+/* XP gain animation */
+@keyframes xp-gain {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+}
+.xp-gain {
+  animation: xp-gain 1.5s ease-out forwards;
+}
+
+/* Subtle bounce for active tab */
+@keyframes subtle-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+.subtle-bounce {
+  animation: subtle-bounce 2s ease-in-out infinite;
+}
