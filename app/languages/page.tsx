@@ -119,13 +119,7 @@ export default function LanguagesPage() {
             </Button>
             <h1 className="text-xl sm:text-2xl font-bold text-green-500">Languages</h1>
           </div>
-          <Button 
-            onClick={() => router.push("/languages/add")} 
-            className="bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm w-full sm:w-auto"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add New Language
-          </Button>
+          {/* Top Add Language button removed as requested */}
         </div>
         
         <Card className="border-green-500/20 bg-black/50 backdrop-blur-sm">
@@ -142,7 +136,7 @@ export default function LanguagesPage() {
               </div>
               <Button 
                 onClick={() => router.push("/languages/add")} 
-                className="mt-4 md:mt-0 bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm hidden md:flex"
+                className="mt-4 md:mt-0 bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add New Language

@@ -109,21 +109,21 @@ export default function BadgesPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="container mx-auto py-6 px-4 md:px-8 space-y-6 md:space-y-8 pb-20 md:pb-8">
+      <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center gap-4">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={() => router.push("/dashboard")} className="text-green-500 border-green-500/20">
+          <Button variant="outline" onClick={() => router.push("/dashboard")} className="text-green-500 border-green-500/20 text-xs sm:text-sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
-          <h1 className="text-2xl font-bold text-green-500">Badges & Achievements</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-green-500">Badges & Achievements</h1>
         </div>
         
         <Button 
           onClick={checkForNewBadges}
           disabled={isChecking}
           variant="outline"
-          className="border-green-500/20 text-green-400"
+          className="border-green-500/20 text-green-400 text-xs sm:text-sm self-end xs:self-auto"
         >
           <RefreshCw className={`h-4 w-4 mr-2 ${isChecking ? 'animate-spin' : ''}`} />
           Check for New Badges
@@ -134,9 +134,9 @@ export default function BadgesPage() {
         <CardHeader>
           <div className="flex items-center">
             <Award className="h-5 w-5 mr-2 text-green-500" />
-            <CardTitle className="text-green-400">Your Achievements</CardTitle>
+            <CardTitle className="text-green-400 text-base sm:text-lg">Your Achievements</CardTitle>
           </div>
-          <CardDescription>
+          <CardDescription className="text-xs sm:text-sm">
             Unlock badges by completing challenges and making progress in your cybersecurity journey
           </CardDescription>
         </CardHeader>
@@ -148,33 +148,33 @@ export default function BadgesPage() {
               No badges found. Complete challenges to earn badges!
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {badges.map(badge => (
                 <div 
                   key={badge.id} 
-                  className={`p-4 rounded-lg border ${
+                  className={`p-3 sm:p-4 rounded-lg border ${
                     badge.user_earned 
                       ? 'border-green-500/30 bg-green-900/20' 
                       : 'border-green-500/10 bg-black/30 opacity-70'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="text-3xl">{badge.icon}</div>
+                    <div className="text-2xl sm:text-3xl">{badge.icon}</div>
                     <div>
-                      <h3 className={`font-medium ${badge.user_earned ? 'text-green-300' : 'text-green-300/60'}`}>
+                      <h3 className={`font-medium text-sm sm:text-base ${badge.user_earned ? 'text-green-300' : 'text-green-300/60'}`}>
                         {badge.name}
                       </h3>
-                      <p className="text-sm text-green-300/60">{badge.description}</p>
+                      <p className="text-xs sm:text-sm text-green-300/60">{badge.description}</p>
                     </div>
                   </div>
                   
-                  <div className="mt-3 flex justify-between items-center text-sm">
-                    <div className="text-green-300/60">
+                  <div className="mt-3 flex flex-col xs:flex-row justify-between items-start xs:items-center gap-1 xs:gap-0">
+                    <div className="text-green-300/60 text-xs sm:text-sm">
                       {badge.user_earned 
-                        ? `Earned on ${formatDate(badge.earned_at)}` 
+                        ? `Earned on ${formatDate(badge.earned_at || null)}` 
                         : `Requirement: ${badge.requirement}`}
                     </div>
-                    <div className="text-green-400">+{badge.xp_reward} XP</div>
+                    <div className="text-green-400 text-xs sm:text-sm self-end xs:self-auto">+{badge.xp_reward} XP</div>
                   </div>
                 </div>
               ))}

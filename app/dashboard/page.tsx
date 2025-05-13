@@ -231,22 +231,7 @@ export default function DashboardPage() {
             {format(new Date(), "EEEE, MMMM do, yyyy")} • Level {user?.level || 1} • {user?.streak_count || 0} day streak
           </p>
         </div>
-        <div className="flex flex-col xs:flex-row gap-3 w-full sm:w-auto">
-          <Button 
-            onClick={() => router.push("/tasks/schedule")} 
-            className="bg-green-600 hover:bg-green-700 text-black w-full sm:w-auto text-sm"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Schedule Task
-          </Button>
-          <Button 
-            onClick={() => router.push("/languages/add")} 
-            className="bg-black border-green-500/20 hover:bg-green-900/20 text-green-400 w-full sm:w-auto text-sm"
-          >
-            <Code className="mr-2 h-4 w-4" />
-            Add Language
-          </Button>
-        </div>
+        {/* Top action buttons removed as requested */}
       </div>
       
       {/* Getting Started - shown only for new users with no tasks or languages */}
@@ -268,9 +253,13 @@ export default function DashboardPage() {
                 <div>
                   <h3 className="font-medium text-green-300">1. Schedule Your First Task</h3>
                   <p className="text-sm text-green-300/60">Create tasks to track your learning activities and earn XP</p>
-                  <p className="mt-2 text-sm text-green-400">
-                    Use the Schedule Task button at the top to create your first task
-                  </p>
+                  <Button 
+                    className="mt-2 bg-green-600 hover:bg-green-700 text-black" 
+                    onClick={() => router.push("/tasks/schedule")}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Schedule Task
+                  </Button>
                 </div>
               </div>
               
@@ -376,27 +365,27 @@ export default function DashboardPage() {
         <TabsList className="bg-black/50 border border-green-500/20 w-full overflow-x-auto flex-nowrap scrollbar-hide">
           <TabsTrigger 
             value="tasks" 
-            className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1"
+            className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1 min-w-[80px]"
           >
-            Today's Tasks
+            Tasks
           </TabsTrigger>
           <TabsTrigger 
             value="mood" 
-            className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1"
+            className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1 min-w-[80px]"
           >
-            Daily Mood
+            Mood
           </TabsTrigger>
           <TabsTrigger 
             value="languages" 
-            className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1"
+            className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1 min-w-[80px]"
           >
             Languages
           </TabsTrigger>
           <TabsTrigger 
             value="reflection" 
-            className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1"
+            className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1 min-w-[80px]"
           >
-            Reflection
+            Reflect
           </TabsTrigger>
         </TabsList>
         
@@ -562,16 +551,16 @@ export default function DashboardPage() {
         {/* Languages tab */}
         <TabsContent value="languages">
           <Card className="border-green-500/20 bg-black/50 backdrop-blur-sm">
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <CardTitle className="text-green-400">Programming Languages</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-green-400 text-base sm:text-lg">Programming Languages</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">
                   Track your progress in different programming languages
                 </CardDescription>
               </div>
               <Button 
                 onClick={() => router.push("/languages/add")} 
-                className="bg-green-600 hover:bg-green-700 text-black"
+                className="bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm self-end sm:self-auto"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Add New Language
@@ -582,23 +571,23 @@ export default function DashboardPage() {
               {(true) ? (
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-green-300">Python</div>
-                      <div className="text-sm text-green-300/60">Intermediate · 120 XP</div>
+                    <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1">
+                      <div className="font-medium text-green-300 text-sm sm:text-base">Python</div>
+                      <div className="text-xs text-green-300/60">Intermediate · 120 XP</div>
                     </div>
                     <Progress value={60} className="bg-green-900/20" />
                   </div>
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-green-300">JavaScript</div>
-                      <div className="text-sm text-green-300/60">Beginner · 80 XP</div>
+                    <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1">
+                      <div className="font-medium text-green-300 text-sm sm:text-base">JavaScript</div>
+                      <div className="text-xs text-green-300/60">Beginner · 80 XP</div>
                     </div>
                     <Progress value={40} className="bg-green-900/20" />
                   </div>
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-green-300">Bash</div>
-                      <div className="text-sm text-green-300/60">Beginner · 50 XP</div>
+                    <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1">
+                      <div className="font-medium text-green-300 text-sm sm:text-base">Bash</div>
+                      <div className="text-xs text-green-300/60">Beginner · 50 XP</div>
                     </div>
                     <Progress value={25} className="bg-green-900/20" />
                   </div>
@@ -622,11 +611,11 @@ export default function DashboardPage() {
                 </div>
               )}
             </CardContent>
-            <CardFooter className="flex justify-between border-t border-green-500/20 pt-4">
-              <div className="text-sm text-green-300/60">
+            <CardFooter className="flex flex-col xs:flex-row justify-between items-start xs:items-center border-t border-green-500/20 pt-4 gap-3">
+              <div className="text-xs sm:text-sm text-green-300/60">
                 <span className="text-green-400 font-medium">Tip:</span> Track multiple languages to diversify your cybersecurity skills
               </div>
-              <Button onClick={() => router.push("/languages")} className="bg-black border-green-500/20 hover:bg-green-900/20 text-green-400">
+              <Button onClick={() => router.push("/languages")} className="bg-black border-green-500/20 hover:bg-green-900/20 text-green-400 text-xs sm:text-sm self-end xs:self-auto">
                 <Code className="mr-2 h-4 w-4" />
                 View All Languages
               </Button>
@@ -638,45 +627,45 @@ export default function DashboardPage() {
         <TabsContent value="reflection">
           <Card className="border-green-500/20 bg-black/50 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-green-400">Daily Reflection</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-green-400 text-base sm:text-lg">Daily Reflection</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
                 What did you learn today? What challenges did you face?
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="p-4 border border-green-500/20 bg-black/30 rounded-md">
                 <textarea 
-                  className="w-full h-32 bg-black border-green-500/20 text-green-300 p-3 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500/50" 
+                  className="w-full h-28 sm:h-32 bg-black border-green-500/20 text-green-300 p-3 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500/50 text-sm sm:text-base" 
                   placeholder="Today I learned..."
                 />
-                <div className="flex justify-between items-center mt-2 text-sm text-green-300/60">
+                <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center mt-2 text-xs sm:text-sm text-green-300/60 gap-2">
                   <div>0 characters</div>
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    className="text-green-400 h-8 px-2"
+                    className="text-green-400 h-8 px-2 text-xs sm:text-sm self-end xs:self-auto"
                     onClick={() => router.push("/reflect")}
                   >
                     <FileText className="h-4 w-4 mr-1" />
                     Save Reflection
                   </Button>
                 </div>
-                <div className="mt-3 text-green-300/60 text-sm">
+                <div className="mt-3 text-green-300/60 text-xs sm:text-sm">
                   <span className="text-green-400 font-medium">Tip:</span> Regular reflection helps reinforce learning and identify areas for improvement.
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="flex justify-between">
+            <CardFooter className="flex flex-col xs:flex-row justify-between gap-2 xs:gap-4">
               <Button 
                 variant="outline" 
-                className="border-green-500/20 bg-black hover:bg-green-900/20 text-green-400"
+                className="border-green-500/20 bg-black hover:bg-green-900/20 text-green-400 text-xs sm:text-sm w-full xs:w-auto order-2 xs:order-1"
                 onClick={() => router.push("/reflect")}
               >
                 <FileText className="mr-2 h-4 w-4" />
                 Write Reflection
               </Button>
               <Button 
-                className="bg-green-600 hover:bg-green-700 text-black"
+                className="bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm w-full xs:w-auto order-1 xs:order-2"
                 onClick={() => router.push("/badges")}
               >
                 <Award className="mr-2 h-4 w-4" />
