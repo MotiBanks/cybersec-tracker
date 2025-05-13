@@ -108,15 +108,19 @@ export default function DashboardPage() {
     setReflectionError(null)
     
     try {
-      // Import the ReflectionsService
-      const { ReflectionsService } = await import("@/services/reflections-service")
+      // Get Supabase client
+      const supabase = getBrowserClient()
       
-      // Create new reflection
-      await ReflectionsService.createReflection({
-        user_id: user.id,
-        content: reflectionText.trim(),
-        tags: [] // Provide empty tags array to match schema
-      })
+      // Create new reflection directly with Supabase
+      const { error: insertError } = await supabase
+        .from("reflections")
+        .insert({
+          user_id: user.id,
+          content: reflectionText.trim(),
+          tags: []
+        })
+      
+      if (insertError) throw insertError
       
       // Show success message
       setReflectionSuccess("Reflection saved successfully!")

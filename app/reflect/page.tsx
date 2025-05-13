@@ -85,19 +85,29 @@ export default function ReflectionPage() {
     setError(null)
     
     try {
+      const supabase = getBrowserClient()
+      
       if (todaysReflection) {
-        // Update existing reflection
-        await ReflectionsService.updateReflection(todaysReflection.id, userId, {
-          content: content.trim()
-        })
+        // Update existing reflection directly with Supabase
+        const { error: updateError } = await supabase
+          .from("reflections")
+          .update({ content: content.trim() })
+          .eq("id", todaysReflection.id)
+          .eq("user_id", userId)
+        
+        if (updateError) throw updateError
         setSuccess("Reflection updated successfully!")
       } else {
-        // Create new reflection directly using the ReflectionsService
-        await ReflectionsService.createReflection({
-          user_id: userId,
-          content: content.trim(),
-          tags: [] // Provide empty tags array to match schema
-        })
+        // Create new reflection directly with Supabase
+        const { error: insertError } = await supabase
+          .from("reflections")
+          .insert({
+            user_id: userId,
+            content: content.trim(),
+            tags: []
+          })
+        
+        if (insertError) throw insertError
         setSuccess("Reflection saved successfully!")
       }
       
