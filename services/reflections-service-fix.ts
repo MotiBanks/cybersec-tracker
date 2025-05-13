@@ -85,7 +85,7 @@ export const ReflectionsService = {
     return Array.from(allTags).sort()
   },
 
-  // Create a new reflection
+  // Create a new reflection - Fixed to avoid ambiguous column reference
   async createReflection(reflection: InsertReflection): Promise<Reflection> {
     const supabase = getBrowserClient()
     
@@ -96,32 +96,28 @@ export const ReflectionsService = {
     }
     
     try {
-      // First, disable RLS for this operation
-      const { data: userData } = await supabase
-        .from("users")
-        .select("id")
-        .eq("id", reflection.user_id)
-        .single()
-      
-      if (!userData) {
-        throw new Error("User not found")
-      }
-      
-      // Insert the reflection with explicit column names
+      // First, insert the reflection without using triggers
       const { data, error } = await supabase
         .from("reflections")
-        .insert({
-          user_id: reflection.user_id,
-          content: reflection.content,
-          tags: reflection.tags || [],
-          created_at: reflectionWithDate.created_at
-        })
-        .select("id, user_id, content, created_at, tags")
+        .insert([reflectionWithDate])
+        .select()
         .single()
 
       if (error) {
         console.error("Error creating reflection:", error)
         throw error
+      }
+
+      // Then manually update the user's streak and XP in a separate call
+      // This avoids the ambiguous column reference issue
+      const { error: updateError } = await supabase.rpc('manual_update_streak_and_xp', {
+        user_id_param: reflection.user_id,
+        xp_amount: 10 // Default XP for reflection
+      })
+
+      if (updateError) {
+        console.error("Error updating streak and XP:", updateError)
+        // Don't throw here, we still created the reflection successfully
       }
 
       return data
