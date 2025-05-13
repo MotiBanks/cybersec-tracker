@@ -86,6 +86,18 @@ export default function DashboardPage() {
   const [todayXp, setTodayXp] = useState(0)
   const [xpProgress, setXpProgress] = useState(0)
   const [nextLevelXp, setNextLevelXp] = useState(100)
+  const [isMobile, setIsMobile] = useState(false)
+  
+  // Check if the screen is mobile size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
   
   useEffect(() => {
     async function loadUserData() {
@@ -210,26 +222,26 @@ export default function DashboardPage() {
   }
   
   return (
-    <div className="container mx-auto py-6 space-y-8">
+    <div className="container mx-auto py-6 px-4 md:px-8 space-y-6 md:space-y-8 pb-20 md:pb-8">
       {/* Header with user info */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-1">
           <UserGreeting user={user} />
-          <p className="text-green-300/60">
+          <p className="text-green-300/60 text-sm sm:text-base">
             {format(new Date(), "EEEE, MMMM do, yyyy")} • Level {user?.level || 1} • {user?.streak_count || 0} day streak
           </p>
         </div>
-        <div className="flex space-x-3">
+        <div className="flex flex-col xs:flex-row gap-3 w-full sm:w-auto">
           <Button 
             onClick={() => router.push("/tasks/schedule")} 
-            className="bg-green-600 hover:bg-green-700 text-black"
+            className="bg-green-600 hover:bg-green-700 text-black w-full sm:w-auto text-sm"
           >
             <Plus className="mr-2 h-4 w-4" />
             Schedule Task
           </Button>
           <Button 
             onClick={() => router.push("/languages/add")} 
-            className="bg-black border-green-500/20 hover:bg-green-900/20 text-green-400"
+            className="bg-black border-green-500/20 hover:bg-green-900/20 text-green-400 w-full sm:w-auto text-sm"
           >
             <Code className="mr-2 h-4 w-4" />
             Add Language
@@ -305,7 +317,7 @@ export default function DashboardPage() {
       )}
       
       {/* Stats overview */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-green-500/20 bg-black/50 backdrop-blur-sm overflow-hidden relative">
           <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent pointer-events-none"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -365,11 +377,31 @@ export default function DashboardPage() {
       
       {/* Main content */}
       <Tabs defaultValue="tasks" className="space-y-4">
-        <TabsList className="bg-black/50 border border-green-500/20">
-          <TabsTrigger value="tasks" className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400">Today's Tasks</TabsTrigger>
-          <TabsTrigger value="mood" className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400">Daily Mood</TabsTrigger>
-          <TabsTrigger value="languages" className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400">Languages</TabsTrigger>
-          <TabsTrigger value="reflection" className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400">Reflection</TabsTrigger>
+        <TabsList className="bg-black/50 border border-green-500/20 w-full overflow-x-auto flex-nowrap scrollbar-hide">
+          <TabsTrigger 
+            value="tasks" 
+            className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1"
+          >
+            Today's Tasks
+          </TabsTrigger>
+          <TabsTrigger 
+            value="mood" 
+            className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1"
+          >
+            Daily Mood
+          </TabsTrigger>
+          <TabsTrigger 
+            value="languages" 
+            className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1"
+          >
+            Languages
+          </TabsTrigger>
+          <TabsTrigger 
+            value="reflection" 
+            className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1"
+          >
+            Reflection
+          </TabsTrigger>
         </TabsList>
         
         {/* Tasks tab */}
@@ -379,7 +411,7 @@ export default function DashboardPage() {
             <div className="flex justify-end">
               <Button 
                 onClick={() => router.push("/tasks/schedule")} 
-                className="bg-green-600 hover:bg-green-700 text-black"
+                className="bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Schedule New Task
@@ -387,7 +419,7 @@ export default function DashboardPage() {
             </div>
             
             {/* Task Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-2">
               <Card className="border-green-500/20 bg-black/50 backdrop-blur-sm">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <div>
@@ -421,27 +453,36 @@ export default function DashboardPage() {
                   ) : (
                     <div className="space-y-4">
                       {tasks.map((task) => (
-                        <div key={task.id} className="flex items-center justify-between p-3 border border-green-500/10 bg-black/30 rounded-md hover:border-green-500/30 transition-all duration-200">
-                          <div>
-                            <div className="font-medium text-green-300">{task.title}</div>
-                            <div className="text-sm text-green-300/60 flex items-center">
-                              <Clock className="h-3 w-3 mr-1 text-green-400" />
-                              {task.scheduled_for && format(new Date(task.scheduled_for), "h:mm a")}
-                              {task.duration_minutes && (
-                                <span className="ml-2">· {task.duration_minutes} mins</span>
-                              )}
-                              <span className="ml-2">· {task.xp_reward} XP</span>
+                        <div key={task.id} className="mb-4 p-3 sm:p-4 border border-green-500/30 bg-green-900/10 rounded-md">
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2">
+                            <h3 className="font-medium text-green-300 text-sm sm:text-base">{task.title}</h3>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="text-green-400 h-8 px-2 self-end sm:self-auto" 
+                              onClick={() => handleCompleteTask(task.id)}
+                            >
+                              <CheckCircle className="h-4 w-4 mr-1" />
+                              Complete
+                            </Button>
+                          </div>
+                          {task.description && (
+                            <p className="text-xs sm:text-sm text-green-300/60 mb-2">{task.description}</p>
+                          )}
+                          <div className="flex flex-wrap items-center text-xs text-green-300/60 gap-y-1">
+                            <div className="flex items-center mr-4">
+                              <Clock className="h-3 w-3 mr-1" />
+                              {task.scheduled_for ? format(new Date(task.scheduled_for), "h:mm a") : "Anytime"}
+                            </div>
+                            <div className="flex items-center mr-4">
+                              <Clock className="h-3 w-3 mr-1" />
+                              {task.duration_minutes} mins
+                            </div>
+                            <div className="flex items-center">
+                              <Award className="h-3 w-3 mr-1" />
+                              {task.xp_reward} XP
                             </div>
                           </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleCompleteTask(task.id)}
-                            className="border-green-500/20 bg-black hover:bg-green-900/20 text-green-400"
-                          >
-                            <CheckCircle className="h-4 w-4 mr-2" />
-                            Complete
-                          </Button>
                         </div>
                       ))}
                     </div>
@@ -651,7 +692,7 @@ export default function DashboardPage() {
       </Tabs>
       
       {/* Logout button at the bottom */}
-      <div className="mt-8 mb-4 flex justify-center">
+      <div className="mt-8 mb-16 sm:mb-4 flex justify-center">
         <button 
           onClick={async () => {
             const supabase = getBrowserClient();

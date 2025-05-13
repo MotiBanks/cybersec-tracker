@@ -199,8 +199,9 @@ export default function LoginPage() {
   }
   
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-      <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen bg-black p-4 px-4 sm:px-6">
+      <Card className="w-full max-w-md border-green-500/20 bg-black/50 backdrop-blur-sm overflow-hidden relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent pointer-events-none"></div>
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
             Cybersecurity Learning Tracker
@@ -210,11 +211,11 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
-              <TabsTrigger value="magic">Magic Link</TabsTrigger>
+          <Tabs value={activeTab} className="w-full" onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-3 bg-black/50 border border-green-500/20">
+              <TabsTrigger value="login" className="text-xs sm:text-sm data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400">Login</TabsTrigger>
+              <TabsTrigger value="signup" className="text-xs sm:text-sm data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400">Sign Up</TabsTrigger>
+              <TabsTrigger value="magic" className="text-xs sm:text-sm data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400">Magic Link</TabsTrigger>
             </TabsList>
             
             {/* Login Form */}
@@ -247,7 +248,11 @@ export default function LoginPage() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-green-600 hover:bg-green-700 text-black" 
+                    disabled={isLoading}
+                  >
                     {isLoading ? "Logging in..." : "Login"}
                   </Button>
                 </form>
@@ -311,7 +316,11 @@ export default function LoginPage() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-green-600 hover:bg-green-700 text-black" 
+                    disabled={isLoading}
+                  >
                     {isLoading ? "Creating account..." : "Create account"}
                   </Button>
                 </form>
@@ -335,7 +344,11 @@ export default function LoginPage() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-green-600 hover:bg-green-700 text-black" 
+                    disabled={isLoading}
+                  >
                     {isLoading ? "Sending link..." : "Send magic link"}
                   </Button>
                 </form>

@@ -51,13 +51,13 @@ export default function ReflectionHistoryPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-8">
+    <div className="container mx-auto py-6 px-4 md:px-8 space-y-6 md:space-y-8 pb-20 md:pb-8">
       <div className="flex items-center gap-4">
-        <Button variant="outline" onClick={() => router.back()} className="text-green-500 border-green-500/20">
+        <Button variant="outline" onClick={() => router.back()} className="text-green-500 border-green-500/20 text-xs sm:text-sm">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back
         </Button>
-        <h1 className="text-2xl font-bold text-green-500">Reflection History</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-green-500">Reflection History</h1>
       </div>
       
       <Card className="border-green-500/20 bg-black/50 backdrop-blur-sm">
@@ -79,17 +79,17 @@ export default function ReflectionHistoryPage() {
               <p className="mt-2 text-green-300/60">Loading your reflections...</p>
             </div>
           ) : reflections.length === 0 ? (
-            <div className="text-center py-8 space-y-2">
-              <div className="inline-flex p-4 rounded-full bg-green-900/20 text-green-400/50">
-                <FileText className="h-8 w-8" />
+            <div className="text-center py-6 sm:py-8 space-y-2">
+              <div className="inline-flex p-3 sm:p-4 rounded-full bg-green-900/20 text-green-400/50">
+                <FileText className="h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h3 className="text-xl font-medium text-green-300">No Reflections Yet</h3>
-              <p className="text-green-300/60 max-w-md mx-auto">
+              <h3 className="text-lg sm:text-xl font-medium text-green-300">No Reflections Yet</h3>
+              <p className="text-green-300/60 max-w-md mx-auto text-sm sm:text-base px-4">
                 Start recording your daily learning experiences to build your reflection history.
               </p>
               <Button 
                 onClick={() => router.push("/reflect")} 
-                className="mt-4 bg-green-600 hover:bg-green-700 text-black"
+                className="mt-4 bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm w-full sm:w-auto mx-4 sm:mx-0"
               >
                 <FileText className="h-4 w-4 mr-2" />
                 Write Your First Reflection
@@ -98,22 +98,22 @@ export default function ReflectionHistoryPage() {
           ) : (
             <div className="space-y-4">
               {reflections.map((reflection) => (
-                <div key={reflection.id} className="p-4 border border-green-500/30 bg-green-900/10 rounded-md">
+                <div key={reflection.id} className="p-3 sm:p-4 border border-green-500/30 bg-green-900/10 rounded-md">
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-medium text-green-300">
+                    <h3 className="font-medium text-green-300 text-sm sm:text-base">
                       {formatDate(reflection.created_at)}
                     </h3>
                   </div>
-                  <p className="text-green-300/80 whitespace-pre-wrap">{reflection.content}</p>
+                  <p className="text-green-300/80 whitespace-pre-wrap text-sm sm:text-base">{reflection.content}</p>
                 </div>
               ))}
             </div>
           )}
         </CardContent>
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex justify-center sm:justify-between">
           <Button 
             variant="outline" 
-            className="border-green-500/20 bg-black hover:bg-green-900/20 text-green-400"
+            className="border-green-500/20 bg-black hover:bg-green-900/20 text-green-400 text-xs sm:text-sm w-full sm:w-auto"
             onClick={() => router.push("/reflect")}
           >
             <FileText className="h-4 w-4 mr-2" />

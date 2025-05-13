@@ -113,19 +113,19 @@ export default function ReflectionPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="container mx-auto py-6 px-4 md:px-8 space-y-6 md:space-y-8 pb-20 md:pb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={() => router.back()} className="text-green-500 border-green-500/20">
+          <Button variant="outline" onClick={() => router.back()} className="text-green-500 border-green-500/20 text-xs sm:text-sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-          <h1 className="text-2xl font-bold text-green-500">Daily Reflection</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-green-500">Daily Reflection</h1>
         </div>
         <Button 
           variant="outline" 
           onClick={() => router.push("/reflect/history")} 
-          className="text-green-500 border-green-500/20"
+          className="text-green-500 border-green-500/20 text-xs sm:text-sm self-end sm:self-auto"
         >
           <Calendar className="h-4 w-4 mr-2" />
           View History
@@ -157,16 +157,16 @@ export default function ReflectionPage() {
               className="bg-black border-green-500/20 text-green-300 min-h-[200px] resize-none"
             />
             
-            <div className="flex justify-between items-center text-sm text-green-300/60">
+            <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center text-sm text-green-300/60 gap-2">
               <div>{charCount} characters</div>
-              <div className="flex items-center">
+              <div className="flex items-center self-end xs:self-auto">
                 <Save className="h-4 w-4 mr-1 text-green-500" />
                 <Button 
                   type="submit" 
                   variant="ghost" 
                   size="sm"
                   disabled={isSubmitting}
-                  className="text-green-400 h-8 px-2"
+                  className="text-green-400 h-8 px-2 text-xs sm:text-sm"
                 >
                   Save Reflection
                 </Button>
@@ -183,7 +183,7 @@ export default function ReflectionPage() {
             <Button
               type="submit"
               disabled={isSubmitting || !content.trim()}
-              className="bg-green-600 hover:bg-green-700 text-black"
+              className="bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm w-full sm:w-auto"
             >
               <Save className="h-4 w-4 mr-2" />
               {isSubmitting ? "Saving..." : todaysReflection ? "Update Reflection" : "Save Reflection"}

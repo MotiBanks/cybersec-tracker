@@ -1,6 +1,33 @@
+/* 
+ * These are Tailwind CSS directives - they are processed during build time
+ * Your IDE may show warnings for these directives, but they can be safely ignored
+ * as they are correctly processed by the Tailwind CSS compiler during build.
+ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /* Custom xs breakpoint for better mobile responsiveness */
+  @media (min-width: 480px) {
+    .xs\:flex-row {
+      flex-direction: row;
+    }
+    .xs\:items-center {
+      align-items: center;
+    }
+    .xs\:w-auto {
+      width: auto;
+    }
+    .xs\:self-auto {
+      align-self: auto;
+    }
+    .xs\:gap-0 {
+      gap: 0px;
+    }
+  }
+}
 
 :root {
   --background: 0 0% 0%;
@@ -187,4 +214,29 @@ body {
 }
 .subtle-bounce {
   animation: subtle-bounce 2s ease-in-out infinite;
+}
+
+/* Mobile optimization utilities */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom responsive breakpoint for extra small screens */
+@media (min-width: 475px) {
+  .xs\:flex-row {
+    flex-direction: row;
+  }
+  
+  .xs\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  .xs\:w-auto {
+    width: auto;
+  }
 }

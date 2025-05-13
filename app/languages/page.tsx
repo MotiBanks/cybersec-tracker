@@ -109,23 +109,22 @@ export default function LanguagesPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-8">
+    <div className="container mx-auto py-6 px-4 md:px-8 space-y-6 md:space-y-8 pb-20 md:pb-8">
       <div className="flex flex-col space-y-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-4">
-            <Button variant="outline" onClick={() => router.push("/dashboard")} className="text-green-500 border-green-500/20">
+            <Button variant="outline" onClick={() => router.push("/dashboard")} className="text-green-500 border-green-500/20 text-xs sm:text-sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Dashboard
             </Button>
-            <h1 className="text-2xl font-bold text-green-500">Programming Languages</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-green-500">Languages</h1>
           </div>
-          
           <Button 
-            onClick={() => router.push("/languages/add")}
-            className="bg-green-600 hover:bg-green-700 text-black"
+            onClick={() => router.push("/languages/add")} 
+            className="bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm w-full sm:w-auto"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add Language
+            Add New Language
           </Button>
         </div>
         
@@ -163,20 +162,20 @@ export default function LanguagesPage() {
         ) : languages.length === 0 ? (
           <Card className="border-green-500/20 bg-black/50 backdrop-blur-sm">
             <CardContent className="py-12 flex flex-col items-center justify-center space-y-6">
-              <div className="bg-green-900/30 text-green-400 p-6 rounded-full">
-                <Code className="h-12 w-12" />
+              <div className="bg-green-900/30 text-green-400 p-4 sm:p-6 rounded-full">
+                <Code className="h-8 w-8 sm:h-12 sm:w-12" />
               </div>
-              <div className="text-center space-y-2">
-                <h3 className="text-xl font-medium text-green-300">No Languages Added Yet</h3>
-                <p className="text-green-300/60 max-w-md">
+              <div className="text-center space-y-2 px-4">
+                <h3 className="text-lg sm:text-xl font-medium text-green-300">No Languages Added Yet</h3>
+                <p className="text-green-300/60 max-w-md text-sm sm:text-base">
                   Track your progress in different programming languages to enhance your cybersecurity skills.
                 </p>
               </div>
               <Button 
                 onClick={() => router.push("/languages/add")} 
-                className="mt-4 bg-green-600 hover:bg-green-700 text-black px-8 py-6 h-auto text-lg"
+                className="mt-4 bg-green-600 hover:bg-green-700 text-black px-4 sm:px-8 py-3 sm:py-6 h-auto text-sm sm:text-lg w-full sm:w-auto mx-4 sm:mx-0"
               >
-                <Plus className="h-5 w-5 mr-2" />
+                <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                 Add Your First Language
               </Button>
             </CardContent>
@@ -185,23 +184,23 @@ export default function LanguagesPage() {
           languages.map(language => (
             <Card key={language.id} className="border-green-500/20 bg-black/50">
               <CardHeader className="pb-2">
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center gap-2 xs:gap-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">{language.icon || "💻"}</span>
-                    <CardTitle className="text-green-400">{language.name}</CardTitle>
+                    <span className="text-xl sm:text-2xl">{language.icon || "💻"}</span>
+                    <CardTitle className="text-green-400 text-base sm:text-lg">{language.name}</CardTitle>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-sm font-medium ${getLevelColor(language.level || "Beginner")}`}>
+                  <div className="flex items-center gap-2 self-end xs:self-auto">
+                    <span className={`text-xs sm:text-sm font-medium ${getLevelColor(language.level || "Beginner")}`}>
                       {language.level || "Beginner"}
                     </span>
-                    <span className="text-sm text-green-300/60">· {language.xp || 0} XP</span>
+                    <span className="text-xs sm:text-sm text-green-300/60">· {language.xp || 0} XP</span>
                   </div>
                 </div>
-                <CardDescription className="flex justify-between items-center mt-1">
-                  <span className="text-green-300/60">
-                    Last practiced: {getTimeAgo(language.last_practiced)}
+                <CardDescription className="flex flex-col xs:flex-row justify-between items-start xs:items-center mt-1 gap-1 xs:gap-0">
+                  <span className="text-green-300/60 text-xs sm:text-sm">
+                    Last practiced: {getTimeAgo(language.last_practiced || null)}
                   </span>
-                  <span className="text-green-300/60">{language.progress || 0}%</span>
+                  <span className="text-green-300/60 text-xs sm:text-sm">{language.progress || 0}%</span>
                 </CardDescription>
               </CardHeader>
               <CardContent className="pb-2">
@@ -211,7 +210,7 @@ export default function LanguagesPage() {
                 <Button 
                   onClick={() => router.push(`/languages/${language.id}`)}
                   variant="outline"
-                  className="border-green-500/20 text-green-400"
+                  className="border-green-500/20 text-green-400 text-xs sm:text-sm w-full xs:w-auto"
                 >
                   <Code className="h-4 w-4 mr-2" />
                   View Details
@@ -224,22 +223,22 @@ export default function LanguagesPage() {
       
       <Card className="border-green-500/20 bg-black/50">
         <CardHeader>
-          <CardTitle className="text-green-400">Weekly Report</CardTitle>
-          <CardDescription>Track your language learning progress over time</CardDescription>
+          <CardTitle className="text-green-400 text-lg sm:text-xl">Weekly Report</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">Track your language learning progress over time</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-4 text-green-300/60">
+          <div className="text-center py-4 text-green-300/60 text-sm sm:text-base">
             No data available for this week
           </div>
-          <p className="text-sm text-green-300/60 mt-4">
+          <p className="text-xs sm:text-sm text-green-300/60 mt-4">
             Export your weekly progress report to track your cybersecurity learning journey over time.
           </p>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline" className="border-green-500/20 text-green-400">
+        <CardFooter className="flex flex-col xs:flex-row justify-between gap-2 xs:gap-0">
+          <Button variant="outline" className="border-green-500/20 text-green-400 text-xs sm:text-sm w-full xs:w-auto">
             Previous Week
           </Button>
-          <Button variant="outline" className="border-green-500/20 text-green-400">
+          <Button variant="outline" className="border-green-500/20 text-green-400 text-xs sm:text-sm w-full xs:w-auto">
             Current Week
           </Button>
         </CardFooter>
