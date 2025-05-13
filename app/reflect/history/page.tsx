@@ -64,9 +64,9 @@ export default function ReflectionHistoryPage() {
         <CardHeader>
           <div className="flex items-center">
             <Calendar className="h-5 w-5 mr-2 text-green-500" />
-            <CardTitle className="text-green-400">Your Learning Journey</CardTitle>
+            <CardTitle className="text-green-400 text-base sm:text-lg">Your Learning Journey</CardTitle>
           </div>
-          <CardDescription>
+          <CardDescription className="text-xs sm:text-sm">
             Review your past reflections to see how far you've come
           </CardDescription>
         </CardHeader>

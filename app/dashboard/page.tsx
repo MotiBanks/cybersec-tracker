@@ -268,13 +268,9 @@ export default function DashboardPage() {
                 <div>
                   <h3 className="font-medium text-green-300">1. Schedule Your First Task</h3>
                   <p className="text-sm text-green-300/60">Create tasks to track your learning activities and earn XP</p>
-                  <Button 
-                    className="mt-2 bg-green-600 hover:bg-green-700 text-black" 
-                    onClick={() => router.push("/tasks/schedule")}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Schedule a Task
-                  </Button>
+                  <p className="mt-2 text-sm text-green-400">
+                    Use the Schedule Task button at the top to create your first task
+                  </p>
                 </div>
               </div>
               

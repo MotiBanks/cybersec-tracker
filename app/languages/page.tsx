@@ -142,7 +142,7 @@ export default function LanguagesPage() {
               </div>
               <Button 
                 onClick={() => router.push("/languages/add")} 
-                className="mt-4 md:mt-0 bg-green-600 hover:bg-green-700 text-black"
+                className="mt-4 md:mt-0 bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm hidden md:flex"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add New Language

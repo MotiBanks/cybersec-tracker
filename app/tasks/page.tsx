@@ -10,7 +10,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { getBrowserClient, getCurrentUser } from "@/lib/supabase"
 import { TasksService } from "@/services/tasks-service"
-import type { Task } from "@/types/database.types"
+
+// Define Task interface
+interface Task {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  task_type: string;
+  scheduled_for: string | null;
+  duration_minutes: number | null;
+  completed: boolean;
+  completed_at: string | null;
+  xp_reward: number;
+  recurring_pattern: string | null;
+  created_at: string;
+}
 
 export default function TasksPage() {
   const router = useRouter()
@@ -110,20 +125,20 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="container mx-auto py-6 px-4 md:px-8 space-y-6 md:space-y-8 pb-20 md:pb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={() => router.push("/dashboard")} className="text-green-500 border-green-500/20">
+          <Button variant="outline" onClick={() => router.push("/dashboard")} className="text-green-500 border-green-500/20 text-xs sm:text-sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
-          <h1 className="text-2xl font-bold text-green-500">Task Manager</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-green-500">Task Manager</h1>
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
           <Button 
             onClick={() => router.push("/tasks/schedule")}
-            className="bg-green-600 hover:bg-green-700 text-black"
+            className="bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm w-full sm:w-auto"
           >
             <Plus className="h-4 w-4 mr-2" />
             Schedule Task
@@ -132,27 +147,27 @@ export default function TasksPage() {
       </div>
       
       <div className="flex items-center gap-4 mb-4">
-        <Filter className="h-4 w-4 text-green-500" />
-        <span className="text-sm text-green-300">Filter:</span>
-        <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="w-[180px] bg-black border-green-500/20 text-green-300">
-            <SelectValue placeholder="Filter tasks" />
-          </SelectTrigger>
-          <SelectContent className="bg-black border-green-500/20 text-green-300">
-            <SelectItem value="all">All Tasks</SelectItem>
-            <SelectItem value="today">Today</SelectItem>
-            <SelectItem value="week">This Week</SelectItem>
-            <SelectItem value="unscheduled">Unscheduled</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-green-400" />
+          <Select value={filter} onValueChange={setFilter}>
+            <SelectTrigger className="w-[140px] sm:w-[180px] bg-black border-green-500/20 text-green-400 text-xs sm:text-sm">
+              <SelectValue placeholder="Filter tasks" />
+            </SelectTrigger>
+            <SelectContent className="bg-black border-green-500/20">
+              <SelectItem value="all" className="text-green-300 text-xs sm:text-sm">All Tasks</SelectItem>
+              <SelectItem value="today" className="text-green-300 text-xs sm:text-sm">Today</SelectItem>
+              <SelectItem value="week" className="text-green-300 text-xs sm:text-sm">This Week</SelectItem>
+              <SelectItem value="unscheduled" className="text-green-300 text-xs sm:text-sm">Unscheduled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-      
       <Tabs defaultValue="pending" className="space-y-4">
-        <TabsList className="bg-black/50 border border-green-500/20">
-          <TabsTrigger value="pending" className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400">
+        <TabsList className="bg-black/50 border border-green-500/20 w-full">
+          <TabsTrigger value="pending" className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1">
             Pending Tasks
           </TabsTrigger>
-          <TabsTrigger value="completed" className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400">
+          <TabsTrigger value="completed" className="data-[state=active]:bg-green-900/20 data-[state=active]:text-green-400 text-xs sm:text-sm flex-1">
             Completed Tasks
           </TabsTrigger>
         </TabsList>
@@ -176,12 +191,12 @@ export default function TasksPage() {
             getFilteredTasks(pendingTasks).map(task => (
               <Card key={task.id} className="border-green-500/20 bg-black/50">
                 <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-green-400">{task.title}</CardTitle>
-                    <span className="text-sm text-green-300/60">+{task.xp_reward} XP</span>
+                  <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center gap-1 xs:gap-0">
+                    <CardTitle className="text-green-400 text-base sm:text-lg">{task.title}</CardTitle>
+                    <span className="text-xs sm:text-sm text-green-300/60">+{task.xp_reward} XP</span>
                   </div>
                   {task.scheduled_for && (
-                    <CardDescription className="flex items-center text-green-300/60">
+                    <CardDescription className="flex items-center text-green-300/60 text-xs sm:text-sm">
                       <Clock className="h-3 w-3 mr-1" />
                       {formatTaskDate(task.scheduled_for)}
                     </CardDescription>
@@ -189,16 +204,16 @@ export default function TasksPage() {
                 </CardHeader>
                 {task.description && (
                   <CardContent className="pb-2">
-                    <p className="text-green-300">{task.description}</p>
+                    <p className="text-green-300 text-xs sm:text-sm">{task.description}</p>
                   </CardContent>
                 )}
-                <CardFooter className="flex justify-between">
-                  <div className="text-xs text-green-300/60">
+                <CardFooter className="flex flex-col xs:flex-row justify-between gap-2 xs:gap-0">
+                  <div className="text-xs text-green-300/60 self-start">
                     Type: {task.task_type?.charAt(0).toUpperCase() + task.task_type?.slice(1) || "Custom"}
                   </div>
                   <Button 
                     onClick={() => handleCompleteTask(task.id)}
-                    className="bg-green-600 hover:bg-green-700 text-black"
+                    className="bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm w-full xs:w-auto"
                   >
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Mark Complete
@@ -228,12 +243,12 @@ export default function TasksPage() {
             getFilteredTasks(completedTasks).map(task => (
               <Card key={task.id} className="border-green-500/20 bg-black/50 opacity-80">
                 <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-green-400 line-through">{task.title}</CardTitle>
-                    <span className="text-sm text-green-300/60">+{task.xp_reward} XP</span>
+                  <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center gap-1 xs:gap-0">
+                    <CardTitle className="text-green-400 line-through text-base sm:text-lg">{task.title}</CardTitle>
+                    <span className="text-xs sm:text-sm text-green-300/60">+{task.xp_reward} XP</span>
                   </div>
                   {task.completed_at && (
-                    <CardDescription className="flex items-center text-green-300/60">
+                    <CardDescription className="flex items-center text-green-300/60 text-xs sm:text-sm">
                       <CheckCircle className="h-3 w-3 mr-1" />
                       Completed on {format(new Date(task.completed_at), "MMM d, yyyy 'at' h:mm a")}
                     </CardDescription>
@@ -241,7 +256,7 @@ export default function TasksPage() {
                 </CardHeader>
                 {task.description && (
                   <CardContent className="pb-2">
-                    <p className="text-green-300">{task.description}</p>
+                    <p className="text-green-300 text-xs sm:text-sm">{task.description}</p>
                   </CardContent>
                 )}
                 <CardFooter>

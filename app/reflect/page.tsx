@@ -136,9 +136,9 @@ export default function ReflectionPage() {
         <CardHeader>
           <div className="flex items-center">
             <FileText className="h-5 w-5 mr-2 text-green-500" />
-            <CardTitle className="text-green-400">What did you learn today? What challenges did you face?</CardTitle>
+            <CardTitle className="text-green-400 text-base sm:text-lg">What did you learn today? What challenges did you face?</CardTitle>
           </div>
-          <CardDescription>
+          <CardDescription className="text-xs sm:text-sm">
             Regular reflection helps reinforce learning and identify areas for improvement
           </CardDescription>
         </CardHeader>
@@ -154,7 +154,7 @@ export default function ReflectionPage() {
               value={content}
               onChange={handleContentChange}
               placeholder="Today I learned..."
-              className="bg-black border-green-500/20 text-green-300 min-h-[200px] resize-none"
+              className="bg-black border-green-500/20 text-green-300 min-h-[150px] sm:min-h-[200px] resize-none text-sm sm:text-base"
             />
             
             <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center text-sm text-green-300/60 gap-2">
@@ -174,7 +174,7 @@ export default function ReflectionPage() {
             </div>
             
             <div className="p-3 border border-green-500/20 bg-black/30 rounded-md">
-              <p className="text-green-300/60 text-sm">
+              <p className="text-green-300/60 text-xs sm:text-sm">
                 <span className="text-green-400 font-medium">Tip:</span> Regular reflection helps reinforce learning and identify areas for improvement.
               </p>
             </div>
@@ -183,7 +183,7 @@ export default function ReflectionPage() {
             <Button
               type="submit"
               disabled={isSubmitting || !content.trim()}
-              className="bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm w-full sm:w-auto"
+              className="bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm w-full sm:w-auto px-3 py-2 h-auto"
             >
               <Save className="h-4 w-4 mr-2" />
               {isSubmitting ? "Saving..." : todaysReflection ? "Update Reflection" : "Save Reflection"}

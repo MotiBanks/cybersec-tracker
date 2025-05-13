@@ -78,13 +78,13 @@ export default function ScheduleTaskPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-8">
+    <div className="container mx-auto py-6 px-4 md:px-8 space-y-6 md:space-y-8 pb-20 md:pb-8">
       <div className="flex items-center gap-4">
-        <Button variant="outline" onClick={() => router.back()} className="text-green-500 border-green-500/20">
+        <Button variant="outline" onClick={() => router.back()} className="text-green-500 border-green-500/20 text-xs sm:text-sm">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back
         </Button>
-        <h1 className="text-2xl font-bold text-green-500">Schedule New Task</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-green-500">Schedule New Task</h1>
       </div>
       
       <Card className="border-green-500/20 bg-black/50 backdrop-blur-sm">
@@ -97,13 +97,13 @@ export default function ScheduleTaskPage() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             {error && (
-              <div className="p-3 rounded-md bg-red-900/20 border border-red-500/30 text-red-300">
+              <div className="p-3 rounded-md bg-red-900/20 border border-red-500/30 text-red-300 text-xs sm:text-sm">
                 {error}
               </div>
             )}
             
             <div className="space-y-2">
-              <label htmlFor="title" className="text-sm font-medium text-green-300">
+              <label htmlFor="title" className="text-xs sm:text-sm font-medium text-green-300">
                 Task Title
               </label>
               <Input
@@ -111,12 +111,12 @@ export default function ScheduleTaskPage() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g., Complete Nmap Tutorial"
-                className="bg-black border-green-500/20 text-green-300"
+                className="bg-black border-green-500/20 text-green-300 text-xs sm:text-sm"
               />
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="description" className="text-sm font-medium text-green-300">
+              <label htmlFor="description" className="text-xs sm:text-sm font-medium text-green-300">
                 Description (Optional)
               </label>
               <Textarea
@@ -124,31 +124,31 @@ export default function ScheduleTaskPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Add more details about the task"
-                className="bg-black border-green-500/20 text-green-300 min-h-[100px]"
+                className="bg-black border-green-500/20 text-green-300 text-xs sm:text-sm min-h-[100px]"
               />
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label htmlFor="taskType" className="text-sm font-medium text-green-300">
+                <label htmlFor="taskType" className="text-xs sm:text-sm font-medium text-green-300">
                   Task Type
                 </label>
                 <Select value={taskType} onValueChange={setTaskType}>
-                  <SelectTrigger className="bg-black border-green-500/20 text-green-300">
+                  <SelectTrigger className="bg-black border-green-500/20 text-green-300 text-xs sm:text-sm">
                     <SelectValue placeholder="Select task type" />
                   </SelectTrigger>
                   <SelectContent className="bg-black border-green-500/20 text-green-300">
-                    <SelectItem value="learning">Learning</SelectItem>
-                    <SelectItem value="practice">Practice</SelectItem>
-                    <SelectItem value="challenge">Challenge</SelectItem>
-                    <SelectItem value="project">Project</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="learning" className="text-xs sm:text-sm">Learning</SelectItem>
+                    <SelectItem value="practice" className="text-xs sm:text-sm">Practice</SelectItem>
+                    <SelectItem value="challenge" className="text-xs sm:text-sm">Challenge</SelectItem>
+                    <SelectItem value="project" className="text-xs sm:text-sm">Project</SelectItem>
+                    <SelectItem value="other" className="text-xs sm:text-sm">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="xpReward" className="text-sm font-medium text-green-300">
+                <label htmlFor="xpReward" className="text-xs sm:text-sm font-medium text-green-300">
                   XP Reward
                 </label>
                 <Input
@@ -163,9 +163,9 @@ export default function ScheduleTaskPage() {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <label htmlFor="scheduledDate" className="text-sm font-medium text-green-300">
+                <label htmlFor="scheduledDate" className="text-xs sm:text-sm font-medium text-green-300">
                   Date
                 </label>
                 <div className="flex items-center">
@@ -175,13 +175,13 @@ export default function ScheduleTaskPage() {
                     type="date"
                     value={scheduledDate}
                     onChange={(e) => setScheduledDate(e.target.value)}
-                    className="bg-black border-green-500/20 text-green-300"
+                    className="bg-black border-green-500/20 text-green-300 text-xs sm:text-sm"
                   />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="scheduledTime" className="text-sm font-medium text-green-300">
+                <label htmlFor="scheduledTime" className="text-xs sm:text-sm font-medium text-green-300">
                   Time
                 </label>
                 <div className="flex items-center">
@@ -191,13 +191,13 @@ export default function ScheduleTaskPage() {
                     type="time"
                     value={scheduledTime}
                     onChange={(e) => setScheduledTime(e.target.value)}
-                    className="bg-black border-green-500/20 text-green-300"
+                    className="bg-black border-green-500/20 text-green-300 text-xs sm:text-sm"
                   />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="duration" className="text-sm font-medium text-green-300">
+                <label htmlFor="duration" className="text-xs sm:text-sm font-medium text-green-300">
                   Duration (minutes)
                 </label>
                 <Input
@@ -207,24 +207,24 @@ export default function ScheduleTaskPage() {
                   max="480"
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
-                  className="bg-black border-green-500/20 text-green-300"
+                  className="bg-black border-green-500/20 text-green-300 text-xs sm:text-sm"
                 />
               </div>
             </div>
           </CardContent>
-          <CardFooter className="flex justify-between">
+          <CardFooter className="flex flex-col xs:flex-row justify-between gap-2 xs:gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              className="border-green-500/20 text-green-400"
+              className="border-green-500/20 text-green-400 text-xs sm:text-sm w-full xs:w-auto order-2 xs:order-1"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-green-600 hover:bg-green-700 text-black"
+              className="bg-green-600 hover:bg-green-700 text-black text-xs sm:text-sm w-full xs:w-auto order-1 xs:order-2"
             >
               <Plus className="h-4 w-4 mr-2" />
               {isSubmitting ? "Creating..." : "Schedule Task"}

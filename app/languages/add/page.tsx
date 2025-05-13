@@ -123,127 +123,81 @@ export default function AddLanguagePage() {
       
       let languageId: string
       
-      // If using existing language
-      if (selectedLanguage) {
-        languageId = selectedLanguage
-      } else {
-        console.log("Creating new language:", {
-          name: customLanguage.trim(),
-          icon: customIcon.trim()
-        })
-        
-        // First check if this language already exists
-        const { data: existingLang } = await supabase
+      // If custom language, create it first
+      if (customLanguage.trim()) {
+        const { data: newLanguage, error: createError } = await supabase
           .from("languages")
-          .select("id")
-          .eq("name", customLanguage.trim())
-          .maybeSingle()
-          
-        if (existingLang) {
-          console.log("Language already exists, using existing ID:", existingLang.id)
-          languageId = existingLang.id
-        } else {
-          // Create new language
-          const { data: newLanguage, error: createError } = await supabase
-            .from("languages")
-            .insert({
-              name: customLanguage.trim(),
-              icon: customIcon.trim(),
-            })
-            .select()
-            .single()
-          
-          if (createError) {
-            console.error("Error creating language:", createError)
-            throw createError
-          }
-          
-          console.log("Created new language:", newLanguage)
-          languageId = newLanguage.id
-        }
-      }
-      
-      console.log("Adding user progress for language ID:", languageId)
-      
-      // Check if user already has this language
-      const { data: existingProgress } = await supabase
-        .from("user_languages")
-        .select("*")
-        .eq("user_id", userId)
-        .eq("language_id", languageId)
-        .maybeSingle()
-        
-      if (existingProgress) {
-        console.log("User already has this language, updating instead")
-        // Simplified update with only essential fields
-        await supabase
-          .from("user_languages")
-          .update({
-            // Just update the timestamp to show it was updated
-            updated_at: new Date().toISOString()
-          })
-          .eq("user_id", userId)
-          .eq("language_id", languageId)
-      } else {
-        // Add user's progress for this language - using only essential fields
-        const { error: progressError } = await supabase
-          .from("user_languages")
           .insert({
-            user_id: userId,
-            language_id: languageId
-            // Only include these fields if you're sure they exist in your table
-            // xp: parseInt(xp, 10) || 0,
-            // last_practiced: new Date().toISOString()
+            name: customLanguage.trim(),
+            icon: customIcon.trim(),
+            is_custom: true
           })
-          
-        if (progressError) {
-          console.error("Error adding user progress:", progressError)
-          throw progressError
-        }
+          .select()
+          .single()
+        
+        if (createError) throw createError
+        
+        languageId = newLanguage.id
+      } else {
+        languageId = selectedLanguage
       }
       
+      // Now create user's progress for this language
+      const { error: progressError } = await supabase
+        .from("user_languages")
+        .insert({
+          user_id: userId,
+          language_id: languageId,
+          level: level,
+          xp: parseInt(xp),
+          progress_percentage: Math.min(parseInt(xp), 100),
+          last_practiced: new Date().toISOString()
+        })
+      
+      if (progressError) throw progressError
+      
+      // Success! Redirect back to languages page
       router.push("/languages")
-    } catch (err) {
-      console.error("Error adding language:", err)
+    } catch (error) {
+      console.error("Error adding language:", error)
       setError("Failed to add language. Please try again.")
-    } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-8">
+    <div className="container mx-auto py-6 px-4 md:px-8 space-y-6 md:space-y-8 pb-20 md:pb-8">
       <div className="flex items-center gap-4">
-        <Button variant="outline" onClick={() => router.back()} className="text-green-500 border-green-500/20 hover:bg-green-900/20 transition-colors">
+        <Button variant="outline" onClick={() => router.back()} className="text-green-500 border-green-500/20 text-xs sm:text-sm">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back
         </Button>
-        <h1 className="text-2xl font-bold text-green-500">Add Programming Language</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-green-500">Add Language</h1>
       </div>
       
       <Card className="border-green-500/20 bg-black/50 backdrop-blur-sm">
         <form onSubmit={handleSubmit}>
-          <CardHeader className="pb-4">
-            <div className="flex items-center space-x-3 mb-2">
+          <CardHeader>
+            <div className="flex items-center gap-3 mb-2">
               <div className="inline-flex p-4 rounded-full bg-green-900/20 text-green-400">
                 <CodeIcon className="h-8 w-8" />
               </div>
-              <CardTitle className="text-green-400">Add Programming Language</CardTitle>
             </div>
-            <CardDescription>
-              Track your progress in a new programming language to enhance your cybersecurity skills
+            <CardTitle className="text-green-400 text-lg sm:text-xl">Add a New Language</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">
+              Track your progress in programming languages relevant to cybersecurity
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {error && (
-              <div className="p-3 bg-red-900/20 border border-red-500/20 text-red-300 rounded-md">
+              <div className="bg-red-900/20 border border-red-500/20 text-red-400 px-4 py-3 rounded-md text-sm">
                 {error}
               </div>
             )}
             
             {/* Step 1: Choose a language */}
             <div className="space-y-4 border border-green-500/10 rounded-md p-4 bg-black/30">
-              <h3 className="text-lg font-medium text-green-300 flex items-center">
+              <h3 className="text-base sm:text-lg font-medium text-green-300 flex items-center">
                 <span className="bg-green-900/30 text-green-400 p-1 rounded-full mr-2 text-xs">1</span>
                 Choose a Language
               </h3>
@@ -252,17 +206,20 @@ export default function AddLanguagePage() {
                 <div className="text-center py-4 text-green-300/60">Loading available languages...</div>
               ) : availableLanguages.length > 0 ? (
                 <div className="space-y-2">
-                  <label htmlFor="language" className="text-sm font-medium text-green-300">
-                    Select Existing Language
+                  <label htmlFor="language" className="text-xs sm:text-sm font-medium text-green-300">
+                    Select Language
                   </label>
                   <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-                    <SelectTrigger className="bg-black border-green-500/20 text-green-300">
-                      <SelectValue placeholder="Select a language" />
+                    <SelectTrigger className="bg-black border-green-500/20 text-green-300 text-xs sm:text-sm">
+                      <SelectValue placeholder="Choose a language" />
                     </SelectTrigger>
-                    <SelectContent className="bg-black border-green-500/20 text-green-300">
-                      {availableLanguages.map(lang => (
-                        <SelectItem key={lang.id} value={lang.id}>
-                          {lang.icon} {lang.name}
+                    <SelectContent className="bg-black border-green-500/20 max-h-[300px]">
+                      {availableLanguages.map((lang) => (
+                        <SelectItem key={lang.id} value={lang.id} className="text-green-300 text-xs sm:text-sm">
+                          <div className="flex items-center gap-2">
+                            <span>{lang.icon || "💻"}</span>
+                            <span>{lang.name}</span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -278,7 +235,7 @@ export default function AddLanguagePage() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="customLanguage" className="text-sm font-medium text-green-300">
+                  <label htmlFor="customLanguage" className="text-xs sm:text-sm font-medium text-green-300">
                     Custom Language Name
                   </label>
                   <Input
@@ -292,12 +249,12 @@ export default function AddLanguagePage() {
                       }
                     }}
                     placeholder="e.g., Perl"
-                    className="bg-black border-green-500/20 text-green-300"
+                    className="bg-black border-green-500/20 text-green-300 text-xs sm:text-sm"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <label htmlFor="customIcon" className="text-sm font-medium text-green-300">
+                  <label htmlFor="customIcon" className="text-xs sm:text-sm font-medium text-green-300">
                     Icon (Emoji)
                   </label>
                   <Input
@@ -305,7 +262,7 @@ export default function AddLanguagePage() {
                     value={customIcon}
                     onChange={(e) => setCustomIcon(e.target.value)}
                     placeholder="e.g., 🐪"
-                    className="bg-black border-green-500/20 text-green-300"
+                    className="bg-black border-green-500/20 text-green-300 text-xs sm:text-sm"
                   />
                 </div>
               </div>
@@ -313,8 +270,8 @@ export default function AddLanguagePage() {
             
             {/* Quick Selection */}
             <div className="space-y-3 border border-green-500/10 rounded-md p-4 bg-black/30 mt-4">
-              <h3 className="text-md font-medium text-green-300">Quick Select Common Languages</h3>
-              <p className="text-sm text-green-300/60">Click any language to quickly add it:</p>
+              <h3 className="text-base sm:text-lg font-medium text-green-300">Quick Select Common Languages</h3>
+              <p className="text-xs sm:text-sm text-green-300/60">Click any language to quickly add it:</p>
               
               <div className="grid grid-cols-3 gap-2 mt-2">
                 {COMMON_LANGUAGES.map(lang => (
@@ -322,36 +279,33 @@ export default function AddLanguagePage() {
                     key={lang.name}
                     type="button"
                     variant="outline"
-                    size="sm"
-                    className={`border-green-500/20 hover:bg-green-900/20 text-green-300 hover:border-green-500/50 transition-all duration-200 h-auto py-2 px-1 ${customLanguage === lang.name ? 'bg-green-900/30 border-green-500/50' : 'bg-black'}`}
+                    className="border-green-500/20 hover:bg-green-900/20 text-green-300 h-auto py-2 px-2 flex flex-col items-center"
                     onClick={() => {
+                      setSelectedLanguage("")
                       setCustomLanguage(lang.name)
                       setCustomIcon(lang.icon)
-                      setSelectedLanguage("")
                     }}
                   >
-                    <div className="flex items-center gap-1">
-                      <span>{lang.icon}</span>
-                      <span className="text-xs">{lang.name}</span>
-                    </div>
+                    <span className="text-lg mb-1">{lang.icon}</span>
+                    <span className="text-xs">{lang.name}</span>
                   </Button>
                 ))}
               </div>
             </div>
             
-            {/* Step 2: Set your proficiency */}
-            <div className="space-y-4 border border-green-500/10 rounded-md p-4 bg-black/30 mt-4">
-              <h3 className="text-lg font-medium text-green-300 flex items-center">
+            {/* Step 2: Set Level and XP */}
+            <div className="space-y-4 border border-green-500/10 rounded-md p-4 bg-black/30">
+              <h3 className="text-base sm:text-lg font-medium text-green-300 flex items-center">
                 <span className="bg-green-900/30 text-green-400 p-1 rounded-full mr-2 text-xs">2</span>
-                Set Your Proficiency
+                Set Your Proficiency Level
               </h3>
               
-              <div className="grid grid-cols-1 gap-4">
-                <div className="space-y-4">
-                  <label htmlFor="level" className="text-sm font-medium text-green-300">
-                    Your Current Level
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs sm:text-sm font-medium text-green-300">
+                    Current Level
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <Button
                       type="button"
                       variant="outline"
@@ -359,7 +313,7 @@ export default function AddLanguagePage() {
                       onClick={() => setLevel('beginner')}
                     >
                       <div className="flex items-center gap-2">
-                        <span>🔰</span>
+                        <span>🌱</span>
                         <span className="text-xs">Beginner</span>
                       </div>
                     </Button>
@@ -370,7 +324,7 @@ export default function AddLanguagePage() {
                       onClick={() => setLevel('intermediate')}
                     >
                       <div className="flex items-center gap-2">
-                        <span>⚡</span>
+                        <span>🌿</span>
                         <span className="text-xs">Intermediate</span>
                       </div>
                     </Button>
@@ -400,7 +354,7 @@ export default function AddLanguagePage() {
                 </div>
                 
                 <div className="space-y-2 mt-4">
-                  <label htmlFor="xp" className="text-sm font-medium text-green-300 flex justify-between">
+                  <label htmlFor="xp" className="text-xs sm:text-sm font-medium text-green-300 flex justify-between">
                     <span>Starting XP: <span className="text-green-400 font-bold">{xp}</span></span>
                     <span className="text-xs text-green-300/60">0-100</span>
                   </label>
@@ -428,12 +382,12 @@ export default function AddLanguagePage() {
               </div>
             </div>
           </CardContent>
-          <CardFooter className="flex justify-between pt-4 border-t border-green-500/20">
+          <CardFooter className="flex flex-col xs:flex-row justify-between pt-4 border-t border-green-500/20 gap-2 xs:gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              className="border-green-500/20 text-green-400 hover:bg-green-900/20 transition-all duration-200"
+              className="border-green-500/20 text-green-400 hover:bg-green-900/20 transition-all duration-200 text-xs sm:text-sm w-full xs:w-auto order-2 xs:order-1"
             >
               <ArrowLeft className="h-4 w-4 mr-1" />
               Cancel
@@ -441,7 +395,7 @@ export default function AddLanguagePage() {
             <Button
               type="submit"
               disabled={isSubmitting || (!selectedLanguage && !customLanguage)}
-              className={`bg-green-600 hover:bg-green-700 text-black transition-all duration-200`}
+              className="bg-green-600 hover:bg-green-700 text-black transition-all duration-200 text-xs sm:text-sm w-full xs:w-auto order-1 xs:order-2"
             >
               {isSubmitting ? (
                 <>
