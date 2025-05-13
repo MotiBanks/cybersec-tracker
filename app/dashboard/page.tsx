@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
-import { Award, Calendar, CheckCircle, Clock, Code, FileText, LineChart, List, LogOut, Plus, Smile } from "lucide-react"
+import { Award, ArrowRight, Calendar, CheckCircle, Clock, Code, FileText, LineChart, List, LogOut, Plus, Save, Smile, Star, Trophy, XCircle } from "lucide-react"
 import MoodSelector from "@/components/mood-selector"
 
 // Client-side only component to handle user greeting
@@ -88,6 +88,51 @@ export default function DashboardPage() {
   const [nextLevelXp, setNextLevelXp] = useState(100)
   const [isMobile, setIsMobile] = useState(false)
   const [reflectionText, setReflectionText] = useState("")
+  const [reflectionError, setReflectionError] = useState<string | null>(null)
+  const [reflectionSuccess, setReflectionSuccess] = useState<string | null>(null)
+  const [isSubmittingReflection, setIsSubmittingReflection] = useState(false)
+  
+  // Function to save reflection
+  const saveReflection = async () => {
+    if (!user?.id) {
+      setReflectionError("User not authenticated. Please log in again.")
+      return
+    }
+    
+    if (!reflectionText.trim()) {
+      setReflectionError("Reflection content cannot be empty")
+      return
+    }
+    
+    setIsSubmittingReflection(true)
+    setReflectionError(null)
+    
+    try {
+      // Import the ReflectionsService
+      const { ReflectionsService } = await import("@/services/reflections-service")
+      
+      // Create new reflection
+      await ReflectionsService.createReflection({
+        user_id: user.id,
+        content: reflectionText.trim(),
+        tags: [] // Provide empty tags array to match schema
+      })
+      
+      // Show success message
+      setReflectionSuccess("Reflection saved successfully!")
+      setReflectionText("") // Clear the text area
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setReflectionSuccess(null)
+      }, 3000)
+    } catch (err: any) {
+      console.error("Error saving reflection:", err)
+      setReflectionError(`Failed to save reflection: ${err?.message || 'Unknown error'}. Please try again.`)
+    } finally {
+      setIsSubmittingReflection(false)
+    }
+  }
   
   // Check if the screen is mobile size
   useEffect(() => {
@@ -634,7 +679,19 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="p-4 border border-green-500/20 bg-black/30 rounded-md">
+              <div className="p-4 space-y-3">
+                {reflectionError && (
+                  <div className="p-3 rounded-md bg-red-900/20 border border-red-500/30 text-red-300 text-xs sm:text-sm">
+                    {reflectionError}
+                  </div>
+                )}
+                
+                {reflectionSuccess && (
+                  <div className="p-3 rounded-md bg-green-900/20 border border-green-500/30 text-green-300 text-xs sm:text-sm">
+                    {reflectionSuccess}
+                  </div>
+                )}
+                
                 <textarea 
                   className="w-full h-28 sm:h-32 bg-black border-green-500/20 text-green-300 p-3 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500/50 text-sm sm:text-base" 
                   placeholder="Today I learned..."
@@ -647,10 +704,11 @@ export default function DashboardPage() {
                     variant="ghost" 
                     size="sm"
                     className="text-green-400 h-8 px-2 text-xs sm:text-sm self-end xs:self-auto"
-                    onClick={() => router.push("/reflect")}
+                    onClick={saveReflection}
+                    disabled={isSubmittingReflection || !reflectionText.trim()}
                   >
-                    <FileText className="h-4 w-4 mr-1" />
-                    Save Reflection
+                    <Save className="h-4 w-4 mr-1" />
+                    {isSubmittingReflection ? "Saving..." : "Save Reflection"}
                   </Button>
                 </div>
                 <div className="mt-3 text-green-300/60 text-xs sm:text-sm">

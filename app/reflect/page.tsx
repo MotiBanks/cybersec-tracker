@@ -18,6 +18,7 @@ export default function ReflectionPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [todaysReflection, setTodaysReflection] = useState<any | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
   useEffect(() => {
     async function loadUser() {
@@ -70,7 +71,10 @@ export default function ReflectionPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!userId) return
+    if (!userId) {
+      setError("User not authenticated. Please log in again.")
+      return
+    }
     
     if (!content.trim()) {
       setError("Reflection content cannot be empty")
@@ -86,27 +90,27 @@ export default function ReflectionPage() {
         await ReflectionsService.updateReflection(todaysReflection.id, userId, {
           content: content.trim()
         })
+        setSuccess("Reflection updated successfully!")
       } else {
-        // Create new reflection with simplified fields to avoid schema mismatch
-        const supabase = getBrowserClient()
-        const { error: reflectionError } = await supabase
-          .from("reflections")
-          .insert({
-            user_id: userId,
-            content: content.trim()
-            // Omitting other fields that might not exist in the schema
-          })
-          
-        if (reflectionError) {
-          console.error("Error inserting reflection directly:", reflectionError)
-          throw reflectionError
-        }
+        // Create new reflection directly using the ReflectionsService
+        await ReflectionsService.createReflection({
+          user_id: userId,
+          content: content.trim(),
+          tags: [] // Provide empty tags array to match schema
+        })
+        setSuccess("Reflection saved successfully!")
       }
       
-      router.push("/dashboard")
-    } catch (err) {
+      // Clear any previous errors
+      setError(null)
+      
+      // Wait a moment to show success before redirecting
+      setTimeout(() => {
+        router.push("/dashboard")
+      }, 1500)
+    } catch (err: any) {
       console.error("Error saving reflection:", err)
-      setError("Failed to save reflection. Please try again.")
+      setError(`Failed to save reflection: ${err?.message || 'Unknown error'}. Please try again.`)
     } finally {
       setIsSubmitting(false)
     }
@@ -147,6 +151,12 @@ export default function ReflectionPage() {
             {error && (
               <div className="p-3 rounded-md bg-red-900/20 border border-red-500/30 text-red-300">
                 {error}
+              </div>
+            )}
+            
+            {success && (
+              <div className="p-3 rounded-md bg-green-900/20 border border-green-500/30 text-green-300">
+                {success}
               </div>
             )}
             
