@@ -87,6 +87,7 @@ export default function DashboardPage() {
   const [xpProgress, setXpProgress] = useState(0)
   const [nextLevelXp, setNextLevelXp] = useState(100)
   const [isMobile, setIsMobile] = useState(false)
+  const [reflectionText, setReflectionText] = useState("")
   
   // Check if the screen is mobile size
   useEffect(() => {
@@ -637,9 +638,11 @@ export default function DashboardPage() {
                 <textarea 
                   className="w-full h-28 sm:h-32 bg-black border-green-500/20 text-green-300 p-3 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500/50 text-sm sm:text-base" 
                   placeholder="Today I learned..."
+                  value={reflectionText}
+                  onChange={(e) => setReflectionText(e.target.value)}
                 />
                 <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center mt-2 text-xs sm:text-sm text-green-300/60 gap-2">
-                  <div>0 characters</div>
+                  <div>{reflectionText.length} characters</div>
                   <Button 
                     variant="ghost" 
                     size="sm"
