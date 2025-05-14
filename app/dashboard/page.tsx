@@ -346,67 +346,79 @@ export default function DashboardPage() {
         {/* Top action buttons removed as requested */}
       </div>
       
-      {/* Getting Started - shown only for new users with no tasks or languages */}
-      {tasks.length === 0 && completedTasks.length === 0 && (
-        <Card className="border-green-500/20 bg-black/50 backdrop-blur-sm overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent pointer-events-none"></div>
+      {/* Getting Started - shown only for new users with no tasks */}
+      {tasks.length === 0 && (
+        <Card className="border-green-500/20 bg-black/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-green-400">Getting Started</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-green-400 text-lg sm:text-xl">Getting Started</CardTitle>
+            <CardDescription className="text-green-300/60 text-xs sm:text-sm">
               Welcome to your Cybersecurity Learning Tracker! Here's how to get started:
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3 p-3 border border-green-500/10 bg-black/30 rounded-md">
-                <div className="bg-green-900/30 text-green-400 p-2 rounded-full">
-                  <Calendar className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-green-300">1. Schedule Your First Task</h3>
-                  <p className="text-sm text-green-300/60">Create tasks to track your learning activities and earn XP</p>
-                  <Button 
-                    className="mt-2 bg-green-600 hover:bg-green-700 text-black" 
-                    onClick={() => router.push("/tasks/schedule")}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Schedule Task
-                  </Button>
-                </div>
+          <CardContent className="space-y-6">
+            {/* Step 1: Schedule Task */}
+            <div className="flex items-start gap-3">
+              <div className="bg-green-900/20 border border-green-500/30 rounded-md p-2 text-green-400">
+                <Calendar className="h-5 w-5" />
               </div>
-              
-              <div className="flex items-start space-x-3 p-3 border border-green-500/10 bg-black/30 rounded-md">
-                <div className="bg-green-900/30 text-green-400 p-2 rounded-full">
-                  <Code className="h-5 w-5" />
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-green-400 font-medium text-sm sm:text-base">1. Schedule Your First Task</span>
                 </div>
-                <div>
-                  <h3 className="font-medium text-green-300">2. Add Programming Languages</h3>
-                  <p className="text-sm text-green-300/60">Track your progress in different programming languages</p>
-                  <Button 
-                    className="mt-2 bg-black border-green-500/20 hover:bg-green-900/20 text-green-400" 
-                    onClick={() => router.push("/languages/add")}
-                  >
-                    <Code className="mr-2 h-4 w-4" />
-                    Add Language
-                  </Button>
-                </div>
+                <p className="text-green-300/60 text-xs sm:text-sm">Create tasks to track your learning activities and earn XP</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-1 bg-green-900/20 border-green-500/30 text-green-400 text-xs hover:bg-green-900/30 hover:text-green-300"
+                  onClick={() => router.push('/tasks/new')}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Schedule Task
+                </Button>
               </div>
-              
-              <div className="flex items-start space-x-3 p-3 border border-green-500/10 bg-black/30 rounded-md">
-                <div className="bg-green-900/30 text-green-400 p-2 rounded-full">
-                  <FileText className="h-5 w-5" />
+            </div>
+
+            {/* Step 2: Add Languages */}
+            <div className="flex items-start gap-3">
+              <div className="bg-green-900/20 border border-green-500/30 rounded-md p-2 text-green-400">
+                <Code className="h-5 w-5" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-green-400 font-medium text-sm sm:text-base">2. Add Programming Languages</span>
                 </div>
-                <div>
-                  <h3 className="font-medium text-green-300">3. Record Daily Reflections</h3>
-                  <p className="text-sm text-green-300/60">Write about what you've learned to reinforce knowledge</p>
-                  <Button 
-                    className="mt-2 bg-black border-green-500/20 hover:bg-green-900/20 text-green-400" 
-                    onClick={() => router.push("/reflect")}
-                  >
-                    <FileText className="mr-2 h-4 w-4" />
-                    Write Reflection
-                  </Button>
+                <p className="text-green-300/60 text-xs sm:text-sm">Track your progress in different programming languages</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-1 bg-green-900/20 border-green-500/30 text-green-400 text-xs hover:bg-green-900/30 hover:text-green-300"
+                  onClick={() => router.push('/languages/add')}
+                >
+                  <Code className="h-4 w-4 mr-1" />
+                  Add Language
+                </Button>
+              </div>
+            </div>
+
+            {/* Step 3: Record Reflections */}
+            <div className="flex items-start gap-3">
+              <div className="bg-green-900/20 border border-green-500/30 rounded-md p-2 text-green-400">
+                <FileText className="h-5 w-5" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-green-400 font-medium text-sm sm:text-base">3. Record Daily Reflections</span>
                 </div>
+                <p className="text-green-300/60 text-xs sm:text-sm">Write about what you've learned to reinforce knowledge</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-1 bg-green-900/20 border-green-500/30 text-green-400 text-xs hover:bg-green-900/30 hover:text-green-300"
+                  onClick={() => router.push('/reflect')}
+                >
+                  <FileText className="h-4 w-4 mr-1" />
+                  Write Reflection
+                </Button>
               </div>
             </div>
           </CardContent>
