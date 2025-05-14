@@ -234,7 +234,20 @@ export default function DashboardPage() {
           setXpProgress(Math.min(100, (currentXp / xpForNextLevel) * 100))
         }
         
-        // Load today's tasks
+        // Check if user has any tasks at all (for Getting Started section)
+        const { count: totalTaskCount, error: countError } = await supabase
+          .from('tasks')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', currentUser.id)
+        
+        // If user has any tasks, hide Getting Started section
+        if (totalTaskCount && totalTaskCount > 0) {
+          // User has tasks, set non-empty arrays to hide Getting Started
+          setTasks([{ id: 'placeholder' }] as any)
+          setCompletedTasks([{ id: 'placeholder' }] as any)
+        }
+        
+        // Load today's tasks for display
         const today = format(new Date(), "yyyy-MM-dd")
         const todaysTasks = await TasksService.getTasksForDate(currentUser.id, today)
         
@@ -242,8 +255,15 @@ export default function DashboardPage() {
         const completed = todaysTasks.filter((task: Task) => task.completed)
         const pending = todaysTasks.filter((task: Task) => !task.completed)
         
-        setTasks(pending)
-        setCompletedTasks(completed)
+        // Only update if we didn't set placeholder values above
+        if (totalTaskCount === 0) {
+          setTasks(pending)
+          setCompletedTasks(completed)
+        } else {
+          // Replace placeholder with actual today's tasks
+          setTasks(pending.length > 0 ? pending : [{ id: 'placeholder' }] as any)
+          setCompletedTasks(completed)
+        }
         
         // Calculate today's XP
         const xpHistory = await UserService.getUserXpHistory(currentUser.id, 10)
