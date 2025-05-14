@@ -108,19 +108,24 @@ export default function DashboardPage() {
     setReflectionError(null)
     
     try {
-      // Get Supabase client
-      const supabase = getBrowserClient()
-      
-      // Create new reflection directly with Supabase
-      const { error: insertError } = await supabase
-        .from("reflections")
-        .insert({
-          user_id: user.id,
+      // Use our API endpoint to create the reflection
+      const response = await fetch('/api/reflections', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
           content: reflectionText.trim(),
           tags: []
-        })
+        }),
+      })
       
-      if (insertError) throw insertError
+      const result = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to save reflection')
+      }
       
       // Show success message
       setReflectionSuccess("Reflection saved successfully!")

@@ -51,6 +51,21 @@ export const createAdminClient = () => {
   })
 }
 
+// Singleton pattern for server-side admin client
+let serviceClient: ReturnType<typeof createAdminClient> | null = null
+
+// Get or create the service client with admin privileges
+export const getServiceClient = () => {
+  if (typeof window !== 'undefined') {
+    throw new Error('getServiceClient should only be called on the server')
+  }
+  
+  if (!serviceClient) {
+    serviceClient = createAdminClient()
+  }
+  return serviceClient
+}
+
 // Helper function to get the current user
 export const getCurrentUser = async () => {
   const supabase = getBrowserClient()
@@ -75,9 +90,9 @@ export const subscribeToChanges = (
   const channel = supabase
     .channel(`public:${table}`)
     .on(
-      'postgres_changes',
+      'postgres_changes' as any, // Type assertion to fix TypeScript error
       filter || { event: '*', schema: 'public', table },
-      (payload) => {
+      (payload: any) => { // Explicitly type the payload parameter
         callback(payload)
       }
     )

@@ -85,10 +85,9 @@ export default function ReflectionPage() {
     setError(null)
     
     try {
-      const supabase = getBrowserClient()
-      
       if (todaysReflection) {
-        // Update existing reflection directly with Supabase
+        // Update existing reflection using Supabase
+        const supabase = getBrowserClient()
         const { error: updateError } = await supabase
           .from("reflections")
           .update({ content: content.trim() })
@@ -98,16 +97,25 @@ export default function ReflectionPage() {
         if (updateError) throw updateError
         setSuccess("Reflection updated successfully!")
       } else {
-        // Create new reflection directly with Supabase
-        const { error: insertError } = await supabase
-          .from("reflections")
-          .insert({
-            user_id: userId,
+        // Create new reflection using our API endpoint
+        const response = await fetch('/api/reflections', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId,
             content: content.trim(),
             tags: []
-          })
+          }),
+        })
         
-        if (insertError) throw insertError
+        const result = await response.json()
+        
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to save reflection')
+        }
+        
         setSuccess("Reflection saved successfully!")
       }
       
