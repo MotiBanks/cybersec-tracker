@@ -346,8 +346,8 @@ export default function DashboardPage() {
         {/* Top action buttons removed as requested */}
       </div>
       
-      {/* Getting Started - shown only for new users with no tasks */}
-      {tasks.length === 0 && (
+      {/* Getting Started Section - Only shown for new users with no tasks */}
+      {tasks.length === 0 && completedTasks.length === 0 && (
         <Card className="border-green-500/20 bg-black/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="text-green-400 text-lg sm:text-xl">Getting Started</CardTitle>
