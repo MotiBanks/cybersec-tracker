@@ -50,6 +50,7 @@ import { TasksService } from "@/services/tasks-service"
 import { UserService } from "@/services/user-service"
 import { MoodService } from "@/services/mood-service"
 import { ReflectionsService } from "@/services/reflections-service"
+import { LanguageService } from "@/services/language-service"
 import type { UserProfile } from "@/services/user-service-new"
 
 // Define Task type directly since it's not exported from database.types
@@ -87,6 +88,9 @@ export default function DashboardPage() {
   const [xpProgress, setXpProgress] = useState(0)
   const [nextLevelXp, setNextLevelXp] = useState(100)
   const [isMobile, setIsMobile] = useState(false)
+  const [totalTimeStudied, setTotalTimeStudied] = useState(0)
+  const [userLanguages, setUserLanguages] = useState<any[]>([])
+  const [isLoadingLanguages, setIsLoadingLanguages] = useState(true)
   const [reflectionText, setReflectionText] = useState("")
   const [reflectionError, setReflectionError] = useState<string | null>(null)
   const [reflectionSuccess, setReflectionSuccess] = useState<string | null>(null)
@@ -226,12 +230,31 @@ export default function DashboardPage() {
         if (profile) {
           setUser(profile)
           
-          // Calculate XP progress
-          const currentLevel = profile.level || 1
+          // Calculate correct level based on XP
           const currentXp = profile.xp || 0
+          
+          // Calculate level: Level 1 needs 0-99 XP, Level 2 needs 100-199 XP, etc.
+          const calculatedLevel = Math.floor(currentXp / 100) + 1
+          
+          // If the calculated level is different from the stored level, update it
+          if (calculatedLevel !== profile.level) {
+            // Update the level in the database
+            await supabase
+              .from('users')
+              .update({ level: calculatedLevel })
+              .eq('id', currentUser.id)
+            
+            // Update local profile
+            profile.level = calculatedLevel
+          }
+          
+          const currentLevel = calculatedLevel
           const xpForNextLevel = currentLevel * 100
-          setNextLevelXp(xpForNextLevel)
-          setXpProgress(Math.min(100, (currentXp / xpForNextLevel) * 100))
+          const xpInCurrentLevel = currentXp - ((currentLevel - 1) * 100)
+          const xpNeededForNextLevel = xpForNextLevel - currentXp
+          
+          setNextLevelXp(xpNeededForNextLevel)
+          setXpProgress(Math.min(100, (xpInCurrentLevel / 100) * 100))
         }
         
         // Check if user has any tasks at all (for Getting Started section)
@@ -255,6 +278,21 @@ export default function DashboardPage() {
         const completed = todaysTasks.filter((task: Task) => task.completed)
         const pending = todaysTasks.filter((task: Task) => !task.completed)
         
+        // Load all completed tasks for total time calculation
+        const { data: allCompletedTasks, error: tasksError } = await supabase
+          .from('tasks')
+          .select('*')
+          .eq('user_id', currentUser.id)
+          .eq('completed', true)
+        
+        // Calculate total time studied across all completed tasks
+        const calculatedTotalTime = allCompletedTasks
+          ? allCompletedTasks.reduce((sum, task) => sum + (task.duration_minutes || 0), 0)
+          : 0
+        
+        // Set the total time studied state
+        setTotalTimeStudied(calculatedTotalTime)
+        
         // Only update if we didn't set placeholder values above
         if (totalTaskCount === 0) {
           setTasks(pending)
@@ -272,6 +310,16 @@ export default function DashboardPage() {
           .reduce((sum, entry) => sum + (entry.xp_amount || 0), 0)
         
         setTodayXp(todayXpTotal)
+        
+        // Load user languages
+        try {
+          const languages = await LanguageService.getUserLanguages(currentUser.id)
+          setUserLanguages(languages)
+        } catch (error) {
+          console.error("Error loading user languages:", error)
+        } finally {
+          setIsLoadingLanguages(false)
+        }
         
         // Set up realtime subscriptions
         const unsubscribeTasks = TasksService.subscribeToTasks(currentUser.id, (payload: any) => {
@@ -495,10 +543,10 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-300">
-              {completedTasks.reduce((sum, task) => sum + (task.duration_minutes || 0), 0)} mins
+              {totalTimeStudied || 0} mins
             </div>
             <p className="text-xs text-green-300/60">
-              Today's learning time
+              Total learning time
             </p>
           </CardContent>
         </Card>
@@ -711,30 +759,32 @@ export default function DashboardPage() {
               </Button>
             </CardHeader>
             <CardContent>
-              {/* If no languages, show prompt to add languages */}
-              {(true) ? (
+              {/* Show user's languages or prompt to add languages */}
+              {isLoadingLanguages ? (
+                <div className="flex justify-center items-center py-8">
+                  <div className="animate-pulse text-green-400">Loading languages...</div>
+                </div>
+              ) : userLanguages.length > 0 ? (
                 <div className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1">
-                      <div className="font-medium text-green-300 text-sm sm:text-base">Python</div>
-                      <div className="text-xs text-green-300/60">Intermediate · 120 XP</div>
-                    </div>
-                    <Progress value={60} className="bg-green-900/20" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1">
-                      <div className="font-medium text-green-300 text-sm sm:text-base">JavaScript</div>
-                      <div className="text-xs text-green-300/60">Beginner · 80 XP</div>
-                    </div>
-                    <Progress value={40} className="bg-green-900/20" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1">
-                      <div className="font-medium text-green-300 text-sm sm:text-base">Bash</div>
-                      <div className="text-xs text-green-300/60">Beginner · 50 XP</div>
-                    </div>
-                    <Progress value={25} className="bg-green-900/20" />
-                  </div>
+                  {userLanguages.map((language: any) => {
+                    // Calculate progress percentage (proficiency is 1-10)
+                    const progressValue = (language.proficiency / 10) * 100;
+                    
+                    // Determine skill level based on proficiency
+                    let skillLevel = "Beginner";
+                    if (language.proficiency >= 7) skillLevel = "Advanced";
+                    else if (language.proficiency >= 4) skillLevel = "Intermediate";
+                    
+                    return (
+                      <div key={language.id} className="space-y-2">
+                        <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1">
+                          <div className="font-medium text-green-300 text-sm sm:text-base">{language.language?.name}</div>
+                          <div className="text-xs text-green-300/60">{skillLevel} · {Math.floor(language.proficiency * 10)} XP</div>
+                        </div>
+                        <Progress value={progressValue} className="bg-green-900/20" />
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-8 space-y-4">

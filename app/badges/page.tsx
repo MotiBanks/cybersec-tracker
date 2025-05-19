@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Award, RefreshCw } from "lucide-react"
+import { useBadgeNotification } from "@/context/badge-notification-context"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { getBrowserClient, getCurrentUser } from "@/lib/supabase"
@@ -11,6 +12,7 @@ import type { Database } from "@/types/database.types"
 type Badge = Database["public"]["Tables"]["badges"]["Row"] & {
   user_earned?: boolean;
   earned_at?: string | null;
+  is_epic?: boolean; // Flag for epic achievements
 }
 
 export default function BadgesPage() {
@@ -19,6 +21,8 @@ export default function BadgesPage() {
   const [badges, setBadges] = useState<Badge[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isChecking, setIsChecking] = useState(false)
+  const [previousBadgeCount, setPreviousBadgeCount] = useState(0)
+  const { showBadgeNotification } = useBadgeNotification()
 
   useEffect(() => {
     async function loadUser() {
@@ -60,10 +64,14 @@ export default function BadgesPage() {
       const badgesWithStatus = allBadges.map(badge => {
         const earned = userBadges?.find(ub => ub.badge_id === badge.id)
         
+        // Identify epic achievements (those with XP reward >= 500)
+        const isEpic = badge.xp_reward >= 500
+        
         return {
           ...badge,
           user_earned: !!earned,
-          earned_at: earned?.earned_at || null
+          earned_at: earned?.earned_at || null,
+          is_epic: isEpic
         }
       })
       
@@ -75,6 +83,10 @@ export default function BadgesPage() {
       })
       
       setBadges(badgesWithStatus)
+      
+      // Count earned badges
+      const earnedCount = badgesWithStatus.filter(b => b.user_earned).length
+      setPreviousBadgeCount(earnedCount)
     } catch (error) {
       console.error("Error loading badges:", error)
     } finally {
@@ -94,8 +106,39 @@ export default function BadgesPage() {
         user_id: userId
       })
       
+      // Store previous count before reloading
+      const prevCount = previousBadgeCount
+      
       // Reload badges
       await loadBadges(userId)
+      
+      // Check if any new badges were earned
+      const currentEarnedBadges = badges.filter(b => b.user_earned)
+      const newEarnedCount = currentEarnedBadges.length
+      
+      // If new badges were earned, show notifications
+      if (newEarnedCount > prevCount) {
+        // Find newly earned badges
+        const newlyEarnedBadges = currentEarnedBadges
+          .filter(badge => {
+            // Find this badge in the previous state
+            const prevBadge = badges.find(b => b.id === badge.id && !b.user_earned)
+            // If it exists in previous state but wasn't earned, it's new
+            return !!prevBadge
+          })
+        
+        // Show notification for each new badge (one at a time)
+        if (newlyEarnedBadges.length > 0) {
+          // Show the first new badge
+          const newBadge = newlyEarnedBadges[0]
+          showBadgeNotification({
+            id: newBadge.id,
+            name: newBadge.name,
+            icon: newBadge.icon,
+            xp_reward: newBadge.xp_reward
+          })
+        }
+      }
     } catch (error) {
       console.error("Error checking for new badges:", error)
     } finally {
@@ -149,7 +192,14 @@ export default function BadgesPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {badges.map(badge => (
+              {/* Group badges by type */}
+              <div className="col-span-full mb-2">
+                <h2 className="text-green-400 text-sm sm:text-base font-medium">Standard Achievements</h2>
+                <div className="h-px bg-green-500/20 mt-2"></div>
+              </div>
+              
+              {/* Standard achievements */}
+              {badges.filter(badge => !badge.is_epic).map(badge => (
                 <div 
                   key={badge.id} 
                   className={`p-3 sm:p-4 rounded-lg border ${
@@ -158,6 +208,7 @@ export default function BadgesPage() {
                       : 'border-green-500/10 bg-black/30 opacity-70'
                   }`}
                 >
+
                   <div className="flex items-center gap-3">
                     <div className="text-2xl sm:text-3xl">{badge.icon}</div>
                     <div>
@@ -178,6 +229,52 @@ export default function BadgesPage() {
                   </div>
                 </div>
               ))}
+              
+              {/* Epic achievements section */}
+              {badges.some(badge => badge.is_epic) && (
+                <>
+                  <div className="col-span-full mt-8 mb-2">
+                    <h2 className="text-green-400 text-sm sm:text-base font-medium flex items-center">
+                      <span className="mr-2">🔥</span>
+                      Epic Achievements
+                      <span className="ml-2 text-xs bg-green-900/40 text-green-400 px-2 py-0.5 rounded-md">Extreme Challenge</span>
+                    </h2>
+                    <div className="h-px bg-green-500/20 mt-2"></div>
+                  </div>
+                  
+                  {badges.filter(badge => badge.is_epic).map(badge => (
+                    <div 
+                      key={badge.id} 
+                      className={`p-3 sm:p-4 rounded-lg border relative overflow-hidden ${badge.user_earned 
+                        ? 'border-green-500/50 bg-green-900/30 shadow-[0_0_15px_rgba(74,222,128,0.2)]' 
+                        : 'border-green-500/20 bg-black/40 opacity-90'
+                      }`}
+                    >
+                      {/* Animated background effect for epic badges */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-green-500/10 pointer-events-none"></div>
+                      
+                      <div className="flex items-center gap-3 relative z-10">
+                        <div className="text-2xl sm:text-3xl">{badge.icon}</div>
+                        <div>
+                          <h3 className={`font-medium text-sm sm:text-base ${badge.user_earned ? 'text-green-300' : 'text-green-300/70'}`}>
+                            {badge.name}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-green-300/60">{badge.description}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-3 flex flex-col xs:flex-row justify-between items-start xs:items-center gap-1 xs:gap-0 relative z-10">
+                        <div className="text-green-300/60 text-xs sm:text-sm">
+                          {badge.user_earned 
+                            ? `Earned on ${formatDate(badge.earned_at || null)}` 
+                            : `Requirement: ${badge.requirement}`}
+                        </div>
+                        <div className="text-green-400 font-medium text-xs sm:text-sm self-end xs:self-auto">+{badge.xp_reward} XP</div>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
           )}
         </CardContent>
